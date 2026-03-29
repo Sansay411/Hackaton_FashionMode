@@ -1,0 +1,86 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+.codex/
+
+# Logs / temp
+*.log
+*.tmp
+*.temp
+
+# Secrets / local env
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Python backend
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.venv/
+venv/
+ENV/
+env/
+
+# Flutter / Dart
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/.metadata
+**/.pub/
+**/.pub-cache/
+**/build/
+**/generated_plugin_registrant.dart
+**/*.iml
+
+# Flutter platform-local files
+frontend/android/.gradle/
+frontend/android/.kotlin/
+frontend/android/local.properties
+frontend/android/key.properties
+frontend/android/app/debug/
+frontend/android/app/profile/
+frontend/android/app/release/
+frontend/android/captures/
+
+frontend/ios/Pods/
+frontend/ios/.symlinks/
+frontend/ios/Flutter/ephemeral/
+frontend/ios/Flutter/Generated.xcconfig
+frontend/ios/Flutter/flutter_export_environment.sh
+
+frontend/macos/Pods/
+frontend/macos/Flutter/ephemeral/
+
+frontend/linux/flutter/ephemeral/
+frontend/windows/flutter/ephemeral/
+
+# Generated IDE / tool files inside frontend
+frontend/.idea/
+frontend/avishu_superapp.iml
+frontend/android/avishu_superapp_android.iml
+
+# Test / coverage outputs
+coverage/
+frontend/coverage/
+
+# Archives / binaries
+*.apk
+*.aab
+*.ipa
+*.tar
+*.tar.gz
+*.zip

@@ -14,7 +14,7 @@ os.environ["SUPABASE_SERVICE_ROLE_KEY"] = "test-service-role-key"
 
 from app.database import Base, SessionLocal, engine
 from app.main import app
-from app.models import Product, User
+from app.models import Order, Product, User
 import app.auth as auth_module
 
 
@@ -38,9 +38,38 @@ def _seed_demo_data() -> None:
                     password="demo123",
                 ),
                 User(
-                    email="production@avishu.com",
-                    full_name="Demo Production",
+                    email="production.manager@avishu.com",
+                    full_name="Demo Production Manager",
                     role="production",
+                    production_type="manager",
+                    specialization=None,
+                    franchise_id=1,
+                    password="demo123",
+                ),
+                User(
+                    email="1@gmail.com",
+                    full_name="Швея 1",
+                    role="production",
+                    production_type="worker",
+                    specialization="sewing",
+                    franchise_id=1,
+                    password="demo123",
+                ),
+                User(
+                    email="2@gmail.com",
+                    full_name="Швея 2",
+                    role="production",
+                    production_type="worker",
+                    specialization="sewing",
+                    franchise_id=1,
+                    password="demo123",
+                ),
+                User(
+                    email="3@gmail.com",
+                    full_name="Швея 3",
+                    role="production",
+                    production_type="worker",
+                    specialization="sewing",
                     franchise_id=1,
                     password="demo123",
                 ),
@@ -71,6 +100,9 @@ def _seed_demo_data() -> None:
             ]
         )
         db.commit()
+        for index, order in enumerate(db.query(Order).order_by(Order.id.asc()).all(), start=1):
+            order.order_code = f"AV-20260329-{index:04d}"
+        db.commit()
     finally:
         db.close()
 
@@ -86,26 +118,40 @@ def reset_database():
 
 @pytest.fixture(autouse=True)
 def fake_supabase(monkeypatch: pytest.MonkeyPatch):
-    token_by_email = {
-        "client@avishu.com": "token_client",
-        "franchisee@avishu.com": "token_franchisee",
-        "production@avishu.com": "token_production",
-    }
-    email_by_token = {token: email for email, token in token_by_email.items()}
-
     def _fake_sign_in(email: str, password: str) -> tuple[str, str]:
-        if password != "demo123" or email not in token_by_email:
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.email == email.strip().lower()).first()
+        finally:
+            db.close()
+
+        if not user or user.password != password:
             raise HTTPException(status_code=401, detail="Invalid email or password")
-        return token_by_email[email], email
+        return f"token_{user.id}", user.email
 
     def _fake_get_user_email(access_token: str) -> str:
-        email = email_by_token.get(access_token)
-        if not email:
+        if not access_token.startswith("token_"):
             raise HTTPException(status_code=401, detail="Invalid authentication credentials")
-        return email
+        raw_id = access_token.removeprefix("token_")
+        if not raw_id.isdigit():
+            raise HTTPException(status_code=401, detail="Invalid authentication credentials")
+
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.id == int(raw_id)).first()
+        finally:
+            db.close()
+
+        if not user:
+            raise HTTPException(status_code=401, detail="Invalid authentication credentials")
+        return user.email
+
+    def _fake_create_user(email: str, password: str) -> None:
+        return None
 
     monkeypatch.setattr(auth_module, "_supabase_sign_in", _fake_sign_in)
     monkeypatch.setattr(auth_module, "_supabase_get_user_email", _fake_get_user_email)
+    monkeypatch.setattr(auth_module, "_create_supabase_user", _fake_create_user)
 
 
 @pytest.fixture(scope="session", autouse=True)
