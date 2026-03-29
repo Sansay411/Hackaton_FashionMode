@@ -3,9 +3,8 @@
 Репозиторий проекта AVISHU Superapp для хакатона
 
 В составе:
-frontend — мобильное приложение на Flutter
-backend — API и синхронизация на FastAPI
-scripts — быстрый запуск и сброс тестовых данных
+frontend мобильное приложение на Flutter
+backend API и синхронизация на FastAPI и pyhonm
 
 ## Роли
 
